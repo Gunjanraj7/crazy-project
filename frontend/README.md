@@ -1,19 +1,44 @@
-# React + Vite
+# Neural Guardian — Login (frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite + Tailwind CSS v4 login page with an animated geometric "guardian" cat that reacts to what you do in the form.
 
-Currently, two official plugins are available:
+## Getting started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev      # start the dev server
+npm run build    # production build into dist/
+npm run lint
+```
 
-## React Compiler
+Demo account: **admin** / **guardian123** (or press *Autofill* on the page).
+Authentication is mocked in `src/features/auth/services/authService.js`. Swap `login()` for a real API call when a backend is ready.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Project structure
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+```
+src/
+├── main.jsx                  # entry point: mounts <App />, loads global styles
+├── App.jsx                   # app shell (add a router here when there are more pages)
+├── pages/
+│   └── LoginPage.jsx         # composes the login screen from feature + shared components
+├── features/
+│   └── auth/                 # everything specific to logging in
+│       ├── index.js          # public exports of the feature
+│       ├── constants.js      # cat moods + captions
+│       ├── components/       # BrandPanel, GeometricCat, AuthCard, LoginForm, SocialLogin, LoginSuccess
+│       ├── services/         # authService (mock login, "remember me" storage)
+│       └── utils/            # validateLogin
+├── components/               # reusable, feature-agnostic UI
+│   ├── ui/                   # Button, InputField, Checkbox, Alert
+│   ├── effects/              # CursorGlow, AnimatedBackground
+│   └── icons/                # brand SVGs (Google, GitHub)
+├── hooks/                    # useMousePosition
+├── lib/                      # small helpers (cn)
+└── styles/
+    └── globals.css           # Tailwind import, design tokens (@theme), keyframes
+```
 
-## Expanding the ESLint configuration
+Imports use the `@` alias for `src/` (configured in `vite.config.js` and `jsconfig.json`), e.g. `import Button from '@/components/ui/Button'`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Rule of thumb:** if something is only used by one feature, it lives inside that feature's folder. Once a second feature needs it, move it to `components/`, `hooks/` or `lib/`.
