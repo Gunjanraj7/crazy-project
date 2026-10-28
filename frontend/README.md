@@ -1,6 +1,16 @@
-# Neural Guardian — Login (frontend)
+# PERSONA//OS (frontend)
 
-React 19 + Vite + Tailwind CSS v4 login page with an animated geometric "guardian" cat that reacts to what you do in the form.
+A cyberpunk AI-avatar chat app. Sign in, pick one of eight personas, and chat. Each avatar has its own personality, colours, sigil and way of replying.
+
+React 19 + Vite + Tailwind CSS v4 + React Router 7.
+
+## Highlights
+
+- **Neural core**: a canvas-rendered 3D geodesic sphere on the auth screens that reacts to the form. It leans towards your cursor, spins faster as you type, raises a hex shield while you enter a password, glitches red on errors and blooms green on success.
+- **8 avatars** (NOVA, VEX, SAGE-9, BYTE, ECHO, RONIN, GLITCH, CIPHER), each with a generated SVG sigil and an in-character reply bank.
+- **Chat**: typewriter replies, typing indicator, suggested prompts, history saved per avatar.
+- **Pages**: login, sign up (with password strength meter), forgot password, dashboard (filter + search avatars, stats, recent chats), chat, profile/settings, 404.
+- **Settings that work**: typewriter replies, CRT scanlines and cursor glow can each be toggled; the profile is editable and the password can be changed.
 
 ## Getting started
 
@@ -11,34 +21,43 @@ npm run build    # production build into dist/
 npm run lint
 ```
 
-Demo account: **admin** / **guardian123** (or press *Autofill* on the page).
-Authentication is mocked in `src/features/auth/services/authService.js`. Swap `login()` for a real API call when a backend is ready.
+Demo account: **demo** / **cyber2077** (or press *Autofill*). You can also create your own account.
+
+> There is no backend yet. Accounts, sessions and chats live in `localStorage`, which is fine for a portfolio demo but not secure for real users.
+
+## Connecting a real AI
+
+Avatar replies come from `src/features/chat/services/chatService.js`. Today it uses the offline persona engine (`utils/personaEngine.js`).
+To use a language model, call your own backend from `getAvatarReply` and pass `avatar.persona` as the system prompt. Keep API keys on the server, never in this frontend.
+
+Auth works the same way: replace the bodies in `src/features/auth/services/authService.js` with API calls. Components only rely on the functions resolving with data or throwing an `Error` with a readable message.
+
+## Deploying
+
+This is a single-page app using browser routing, so the host must serve `index.html` for unknown paths (e.g. Netlify `_redirects`: `/* /index.html 200`, or Vercel rewrites).
 
 ## Project structure
 
 ```
 src/
-├── main.jsx                  # entry point: mounts <App />, loads global styles
-├── App.jsx                   # app shell (add a router here when there are more pages)
-├── pages/
-│   └── LoginPage.jsx         # composes the login screen from feature + shared components
+├── main.jsx                  # entry point
+├── App.jsx                   # routes: auth pages, protected app pages, 404
+├── config/app.js             # app name, tagline, version
+├── layouts/AppLayout.jsx     # sidebar (desktop) / top bar + tab bar (mobile)
+├── pages/                    # Dashboard, Chat, Profile, NotFound
 ├── features/
-│   └── auth/                 # everything specific to logging in
-│       ├── index.js          # public exports of the feature
-│       ├── constants.js      # cat moods + captions
-│       ├── components/       # BrandPanel, GeometricCat, AuthCard, LoginForm, SocialLogin, LoginSuccess
-│       ├── services/         # authService (mock login, "remember me" storage)
-│       └── utils/            # validateLogin
-├── components/               # reusable, feature-agnostic UI
-│   ├── ui/                   # Button, InputField, Checkbox, Alert
-│   ├── effects/              # CursorGlow, AnimatedBackground
+│   ├── auth/                 # AuthProvider + useAuth, route guards, forms, NeuralCore, mock authService
+│   ├── avatars/              # avatar data (personas + reply banks), AvatarSigil, AvatarCard
+│   └── chat/                 # ChatRoom UI, useChat, typewriter, persona engine, chat storage
+├── components/
+│   ├── ui/                   # Button, InputField, Checkbox, Toggle, Alert, Panel, Logo, HexInitials
+│   ├── effects/              # AnimatedBackground, CursorGlow, GlobalEffects
 │   └── icons/                # brand SVGs (Google, GitHub)
-├── hooks/                    # useMousePosition
-├── lib/                      # small helpers (cn)
-└── styles/
-    └── globals.css           # Tailwind import, design tokens (@theme), keyframes
+├── hooks/                    # useMousePosition, useDocumentTitle
+├── lib/                      # cn, time formatting
+└── styles/globals.css        # design tokens (@theme), keyframes, glitch / scanline / chamfer utilities
 ```
 
-Imports use the `@` alias for `src/` (configured in `vite.config.js` and `jsconfig.json`), e.g. `import Button from '@/components/ui/Button'`.
+Imports use the `@` alias for `src/`, e.g. `import Button from '@/components/ui/Button'`.
 
-**Rule of thumb:** if something is only used by one feature, it lives inside that feature's folder. Once a second feature needs it, move it to `components/`, `hooks/` or `lib/`.
+**Adding an avatar:** add an entry to `src/features/avatars/data/avatars.js`. The dashboard, sigil, chat and sidebar pick it up automatically.

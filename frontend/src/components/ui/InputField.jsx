@@ -4,8 +4,10 @@ import { cn } from '@/lib/cn';
 
 // Labelled text input with an optional leading icon, trailing slot (e.g. a show/hide button),
 // helper hint and validation error, all wired up with the right aria attributes.
+// Pass `multiline` to render a textarea instead.
 export default function InputField({
   label,
+  multiline = false,
   icon: Icon,
   error,
   hint,
@@ -20,6 +22,7 @@ export default function InputField({
   const errorId = `${inputId}-error`;
   const hintId = `${inputId}-hint`;
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(' ') || undefined;
+  const Control = multiline ? 'textarea' : 'input';
 
   return (
     <div className="space-y-2">
@@ -32,7 +35,7 @@ export default function InputField({
 
       <div className="group relative">
         {Icon && (
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+          <span className="pointer-events-none absolute top-0 left-0 flex h-12 items-center pl-4">
             <Icon
               aria-hidden="true"
               className={cn(
@@ -43,7 +46,7 @@ export default function InputField({
           </span>
         )}
 
-        <input
+        <Control
           ref={ref}
           id={inputId}
           aria-invalid={error ? true : undefined}
@@ -51,6 +54,7 @@ export default function InputField({
           className={cn(
             'w-full rounded-xl border bg-night-700 py-3 text-white shadow-inner transition-all placeholder:text-gray-500',
             'focus:outline-hidden focus:ring-1 read-only:opacity-70',
+            multiline ? 'min-h-24 resize-y' : 'h-12',
             Icon ? 'pl-12' : 'pl-4',
             trailing ? 'pr-12' : 'pr-4',
             error
@@ -60,7 +64,7 @@ export default function InputField({
           {...inputProps}
         />
 
-        {trailing && <div className="absolute inset-y-0 right-0 flex items-center pr-2">{trailing}</div>}
+        {trailing && <div className="absolute top-0 right-0 flex h-12 items-center pr-2">{trailing}</div>}
       </div>
 
       {hint && (

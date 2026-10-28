@@ -1,9 +1,10 @@
-import { CircleAlert, Info } from 'lucide-react';
+import { CircleAlert, CircleCheck, Info } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const VARIANTS = {
   error: { icon: CircleAlert, className: 'border-rose-500/30 bg-rose-500/10 text-rose-300' },
   info: { icon: Info, className: 'border-sky-500/30 bg-sky-500/10 text-sky-300' },
+  success: { icon: CircleCheck, className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' },
 };
 
 export default function Alert({ variant = 'info', children }) {
