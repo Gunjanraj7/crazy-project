@@ -1,0 +1,18 @@
+# Safety net for the whole repo (frontend/ and backend/ also have their own .gitignore).
+
+# Secrets: real environment files never go to git, in any folder.
+# Templates with placeholder values (.env.example) are fine to commit.
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Logs and OS clutter
+*.log
+.DS_Store
+Thumbs.db
