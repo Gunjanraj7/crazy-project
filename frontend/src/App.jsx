@@ -1,6 +1,15 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import GlobalEffects from '@/components/effects/GlobalEffects';
-import { AuthLayout, AuthProvider, ForgotPasswordForm, LoginForm, RedirectIfAuthed, RequireAuth, SignupForm } from '@/features/auth';
+import {
+  AuthLayout,
+  AuthProvider,
+  ForgotPasswordForm,
+  LoginForm,
+  RedirectIfAuthed,
+  RequireAuth,
+  ResetPasswordForm,
+  SignupForm,
+} from '@/features/auth';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import AppLayout from '@/layouts/AppLayout';
 import ChatPage from '@/pages/ChatPage';
@@ -25,6 +34,7 @@ export default function App() {
               <Route path="/login" element={<Titled title="Sign in"><LoginForm /></Titled>} />
               <Route path="/signup" element={<Titled title="Create account"><SignupForm /></Titled>} />
               <Route path="/forgot-password" element={<Titled title="Reset password"><ForgotPasswordForm /></Titled>} />
+              <Route path="/reset-password" element={<Titled title="New password"><ResetPasswordForm /></Titled>} />
             </Route>
           </Route>
 

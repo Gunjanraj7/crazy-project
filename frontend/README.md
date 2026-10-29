@@ -9,32 +9,43 @@ React 19 + Vite + Tailwind CSS v4 + React Router 7.
 - **Neural core**: a canvas-rendered 3D geodesic sphere on the auth screens that reacts to the form. It leans towards your cursor, spins faster as you type, raises a hex shield while you enter a password, glitches red on errors and blooms green on success.
 - **8 avatars** (NOVA, VEX, SAGE-9, BYTE, ECHO, RONIN, GLITCH, CIPHER), each with a generated SVG sigil and an in-character reply bank.
 - **Chat**: typewriter replies, typing indicator, suggested prompts, history saved per avatar.
-- **Pages**: login, sign up (with password strength meter), forgot password, dashboard (filter + search avatars, stats, recent chats), chat, profile/settings, 404.
+- **Real accounts**: sign up, login, sessions, profile and password changes are handled by the FastAPI + PostgreSQL backend in `../backend`.
+- **Pages**: login, sign up (with password strength meter), forgot / reset password, dashboard (filter + search avatars, stats, recent chats), chat, profile/settings, 404.
 - **Settings that work**: typewriter replies, CRT scanlines and cursor glow can each be toggled; the profile is editable and the password can be changed.
 
 ## Getting started
 
-```bash
-npm install
-npm run dev      # start the dev server
-npm run build    # production build into dist/
-npm run lint
+The app needs the backend running too (see `../backend/README.md` for its one-time setup). Use two terminals:
+
+```powershell
+# Terminal 1: API on http://localhost:8000
+cd "D:\crazy project FR\backend"
+.venv\Scripts\uvicorn app.main:app --reload
+
+# Terminal 2: app on http://localhost:5173
+cd "D:\crazy project FR\frontend"
+npm install      # first time only
+npm run dev
 ```
+
+Other scripts: `npm run build` (production build into `dist/`), `npm run lint`.
 
 Demo account: **demo** / **cyber2077** (or press *Autofill*). You can also create your own account.
 
-> There is no backend yet. Accounts, sessions and chats live in `localStorage`, which is fine for a portfolio demo but not secure for real users.
+During development Vite forwards every `/api/*` request to the backend (`server.proxy` in `vite.config.js`), so the browser sees a single origin and the `HttpOnly` session cookie just works.
+
+> Chat history still lives in the browser's `localStorage`; moving it to the database is the next step.
 
 ## Connecting a real AI
 
 Avatar replies come from `src/features/chat/services/chatService.js`. Today it uses the offline persona engine (`utils/personaEngine.js`).
 To use a language model, call your own backend from `getAvatarReply` and pass `avatar.persona` as the system prompt. Keep API keys on the server, never in this frontend.
 
-Auth works the same way: replace the bodies in `src/features/auth/services/authService.js` with API calls. Components only rely on the functions resolving with data or throwing an `Error` with a readable message.
+Auth goes through `src/features/auth/services/authService.js`, a small `fetch` client for the backend. Its functions resolve with data or throw an `ApiError` with a readable `message` and per-field `fieldErrors`, which the forms show under the matching inputs.
 
 ## Deploying
 
-This is a single-page app using browser routing, so the host must serve `index.html` for unknown paths (e.g. Netlify `_redirects`: `/* /index.html 200`, or Vercel rewrites).
+This is a single-page app using browser routing, so the host must serve `index.html` for unknown paths (e.g. Netlify `_redirects`: `/* /index.html 200`, or Vercel rewrites). It also needs `/api` routed to the backend, ideally on the same domain; see "Before deploying" in `../backend/README.md`.
 
 ## Project structure
 
@@ -46,7 +57,7 @@ src/
 ├── layouts/AppLayout.jsx     # sidebar (desktop) / top bar + tab bar (mobile)
 ├── pages/                    # Dashboard, Chat, Profile, NotFound
 ├── features/
-│   ├── auth/                 # AuthProvider + useAuth, route guards, forms, NeuralCore, mock authService
+│   ├── auth/                 # AuthProvider + useAuth, route guards, forms, NeuralCore, API client (authService)
 │   ├── avatars/              # avatar data (personas + reply banks), AvatarSigil, AvatarCard
 │   └── chat/                 # ChatRoom UI, useChat, typewriter, persona engine, chat storage
 ├── components/

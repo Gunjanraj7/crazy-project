@@ -26,9 +26,15 @@ export default function ForgotPasswordForm() {
 
     setStatus('sending');
     onMoodChange(MOOD.LOADING);
-    await requestPasswordReset(email);
-    setStatus('sent');
-    onMoodChange(MOOD.SUCCESS);
+    try {
+      await requestPasswordReset(email);
+      setStatus('sent');
+      onMoodChange(MOOD.SUCCESS);
+    } catch (err) {
+      setError(err.fieldErrors?.email ?? err.message);
+      setStatus('idle');
+      onMoodChange(MOOD.ERROR);
+    }
   };
 
   const startOver = () => {

@@ -42,6 +42,7 @@ function IdentityForm() {
       await updateProfile({ ...values, displayName: values.displayName.trim(), bio: values.bio.trim() });
       setMessage({ variant: 'success', text: 'Profile updated.' });
     } catch (err) {
+      setErrors(err.fieldErrors ?? {});
       setMessage({ variant: 'error', text: err.message });
     } finally {
       setSaving(false);
@@ -131,6 +132,7 @@ function PasswordForm() {
       setValues(EMPTY_PASSWORDS);
       setMessage({ variant: 'success', text: 'Password changed.' });
     } catch (err) {
+      setErrors(err.fieldErrors ?? {});
       setMessage({ variant: 'error', text: err.message });
     } finally {
       setSaving(false);

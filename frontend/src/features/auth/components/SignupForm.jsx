@@ -63,7 +63,9 @@ export default function SignupForm() {
       onMoodChange(MOOD.SUCCESS);
       setTimeout(() => startSession(user), SUCCESS_REDIRECT_DELAY_MS);
     } catch (err) {
-      setMessage({ variant: 'error', text: err.message });
+      // Field problems (e.g. username taken) show under the input; anything else as a banner.
+      if (err.fieldErrors && Object.keys(err.fieldErrors).length > 0) setErrors(err.fieldErrors);
+      else setMessage({ variant: 'error', text: err.message });
       onMoodChange(MOOD.ERROR);
       setStatus('idle');
     }

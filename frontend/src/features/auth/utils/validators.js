@@ -1,6 +1,7 @@
 // Each validator returns an object of field -> error message. An empty object means the form is valid.
 
 const MIN_USERNAME_LENGTH = 3;
+const MAX_USERNAME_LENGTH = 32;
 const MIN_PASSWORD_LENGTH = 8;
 const USERNAME_PATTERN = /^[a-z0-9_.-]+$/i;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,9 +35,11 @@ export function validateSignup({ displayName, username, email, password, confirm
       ? 'Username is required.'
       : name.length < MIN_USERNAME_LENGTH
         ? `Username must be at least ${MIN_USERNAME_LENGTH} characters.`
-        : !USERNAME_PATTERN.test(name)
-          ? 'Only letters, numbers, dots, dashes and underscores.'
-          : undefined,
+        : name.length > MAX_USERNAME_LENGTH
+          ? `Username must be at most ${MAX_USERNAME_LENGTH} characters.`
+          : !USERNAME_PATTERN.test(name)
+            ? 'Only letters, numbers, dots, dashes and underscores.'
+            : undefined,
     email: validateEmail(email),
     password: validateNewPassword(password),
     confirmPassword: confirmPassword === password ? undefined : 'Passwords don’t match.',

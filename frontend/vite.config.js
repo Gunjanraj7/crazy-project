@@ -17,4 +17,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    // Forward API calls to the FastAPI backend, so the browser sees one origin and the session cookie just works.
+    proxy: {
+      '/api': 'http://localhost:8000',
+    },
+  },
 })
